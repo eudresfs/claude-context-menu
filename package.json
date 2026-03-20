@@ -18,6 +18,11 @@
   "bugs": "https://github.com/eudresfs/claude-context-menu/issues",
   "author": "eudresfs",
   "license": "MIT",
+  "files": [
+    "bin/",
+    "scripts/",
+    "prebuilt/"
+  ],
   "engines": {
     "node": ">=18"
   }
