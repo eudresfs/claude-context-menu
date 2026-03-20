@@ -11,6 +11,8 @@ jobs:
     runs-on: windows-latest
     # Prevent loops when the bot commits the prebuilt DLL
     if: github.actor != 'github-actions[bot]'
+    permissions:
+      contents: write
 
     steps:
       - uses: actions/checkout@v4
