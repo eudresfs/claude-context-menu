@@ -1,0 +1,24 @@
+{
+  "name": "claude-context-menu",
+  "version": "1.0.0",
+  "description": "Add 'Open with Claude' to Windows Explorer context menu",
+  "type": "module",
+  "bin": {
+    "claude-context-menu": "./bin/cli.js"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.9.0"
+  },
+  "keywords": ["claude", "context-menu", "windows", "explorer", "shell"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eudresfs/claude-context-menu.git"
+  },
+  "homepage": "https://github.com/eudresfs/claude-context-menu#readme",
+  "bugs": "https://github.com/eudresfs/claude-context-menu/issues",
+  "author": "eudresfs",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,19 @@
+node_modules/
+
+# CMake build artifacts
+build/
+out/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.VC.db
+*.VC.opendb
+
+# Debug builds of the DLL (release goes to prebuilt/ and IS tracked)
+prebuilt/debug/
+
+# OS
+Thumbs.db
+Desktop.ini
