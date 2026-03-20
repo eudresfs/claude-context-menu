@@ -22,12 +22,7 @@ Right-click a folder
 └─ Open with Claude             ← this package adds this
 ```
 
-Two integration modes are supported, depending on whether the prebuilt native DLL is present:
-
-| Mode | Menu | Requires |
-|---|---|---|
-| **Modern** (DLL) | Windows 11 new-style menu + classic | Prebuilt `claude-context-menu.dll` |
-| **Classic** (fallback) | Classic menu only ("Show more options") | Nothing extra |
+The entry appears in the **classic context menu** (right-click → "Show more options" on Windows 11). See [Known limitations](#known-limitations) for details on why the modern menu is not supported without MSIX packaging.
 
 ---
 
@@ -100,11 +95,8 @@ The installer will ask three questions and then register the context menu entry:
 ✔  claude found: C:\Users\you\AppData\Local\Programs\claude\claude.exe
 ✔  pwsh found: C:\Program Files\PowerShell\7\pwsh.exe
 ✔  Windows Terminal found: C:\...\wt.exe   (optional)
-✔  DLL found: C:\...\prebuilt\claude-context-menu.dll
-✔  CLSID registered  (modern menu active)
 ✔  Verb registered  (folder background)
 ✔  Verb registered  (folder click)
-✔  Config key found
 │
 └  Done.
 ```
@@ -113,28 +105,13 @@ The installer will ask three questions and then register the context menu entry:
 
 ## How it works
 
-### Classic menu (fallback)
-
-A plain registry verb is written under `HKCU\Software\Classes\Directory\...\shell\Claude`. Explorer reads it and adds the entry to the "Show more options" (classic) menu. No binaries needed.
-
-### Modern menu (DLL)
-
-A small native DLL (`claude-context-menu.dll`) implements the [`IExplorerCommand`](https://learn.microsoft.com/en-us/windows/win32/api/shobjidl_core/nn-shobjidl_core-iexplorercommand) COM interface. The installer:
-
-1. Registers the DLL as a COM in-process server under `HKCU\Software\Classes\CLSID\{GUID}`
-2. Writes your configuration to `HKCU\Software\ClaudeContextMenu`
-3. Registers the verb with `ExplorerCommandHandler = {GUID}` — this is what makes the item appear in the Windows 11 modern menu
-
-At click time, Explorer loads the DLL, calls `IExplorerCommand::Invoke`, which reads config from the registry and calls `CreateProcess` to launch your terminal.
+A registry verb is written under `HKCU\Software\Classes\Directory\...\shell\Claude` for both folder clicks and folder background clicks. Explorer reads it and adds the entry to the context menu. No administrator privileges required.
 
 ```
-Explorer right-click
+Explorer right-click → "Open with Claude"
     │
-    └─ IExplorerCommand::Invoke(IShellItemArray*)
-           │
-           ├─ GetDisplayName(SIGDN_FILESYSPATH) → "C:\path\to\folder"
-           ├─ ReadConfig(HKCU\Software\ClaudeContextMenu)
-           └─ CreateProcess("pwsh.exe -NoExit -Command \"Set-Location '...'; claude\"")
+    └─ PowerShell spawns in the clicked folder
+           └─ claude
 ```
 
 ---
@@ -212,6 +189,18 @@ This removes:
 - Both verb registry entries (`Directory\shell` and `Directory\Background\shell`)
 - The COM server registration (`HKCU\Software\Classes\CLSID\{GUID}`)
 - The configuration key (`HKCU\Software\ClaudeContextMenu`)
+
+---
+
+## Known limitations
+
+**Windows 11 modern context menu**
+
+On Windows 11, right-clicking a folder shows a short "modern" menu first. This package's entry appears one level deeper, under "Show more options" (the classic menu). Reaching the short modern menu requires [MSIX package identity](https://learn.microsoft.com/en-us/windows/apps/desktop/modernize/package-identity-overview) — a packaging and code-signing requirement that is incompatible with a plain npm package. This is tracked as a future enhancement.
+
+**Windows only**
+
+macOS and Linux file managers each use different extension systems (Automator Services, Nautilus scripts, Dolphin ServiceMenus). Cross-platform support is planned but not yet implemented.
 
 ---
 

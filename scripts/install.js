@@ -151,7 +151,7 @@ async function main() {
     [
       `Shell  : ${shell.label}`,
       `Claude : ${claudePath}`,
-      `Mode   : ${hasDll ? 'Modern + Classic menu (DLL)' : 'Classic menu only (no DLL)'}`,
+      `Mode   : Classic menu  (right-click → Show more options)`,
     ].join('\n'),
     'Configuration'
   );
